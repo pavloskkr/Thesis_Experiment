@@ -5,3 +5,6 @@ subjects:
 
   # org images: these lines will be appended automatically by import_all.sh
   # - localhost:5001/private/your-app@sha256:...
+  - localhost:5001/plat/bscjs:latest@sha256:5e88464151cedc46727eb027478ed7d0f399341061f09d9c59ac63b5fc786469
+  - localhost:5001/itdev/ibe-tool-liquibase:local@sha256:952eeb57eca15b4f66ae200951dc599097bed1790223151be47c9881c00d64eb
+  - localhost:5001/docker/kafka-setup-topics:2024.10.17-2@sha256:c46ca0439de47b3cea09bea542e97b34afd8442c571c394143c685d81a3e65ae

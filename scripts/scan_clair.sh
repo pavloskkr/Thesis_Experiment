@@ -11,43 +11,62 @@ if ! curl -fsSL "$CLAIR_HEALTH" >/dev/null; then
   exit 1
 fi
 
-# host registry (where we pushed), as seen from host:
+# Push-side host view (where you pushed tars)
 PUSH_REG="${PUSH_REGISTRY:-localhost:5001}"
-# same registry as seen FROM Clair container (compose service name + internal port)
-PULL_REG_FOR_CLAIR="${PULL_REGISTRY_FOR_CLAIR:-registry:5000}"
+# Pull-side view for Clair in its container
+PULL_REG_FOR_CLAIR="${PULL_REGISTRY_FOR_CLAIR:-host.docker.internal:5001}"
 
-# Read refs
-mapfile -t REFS < <(awk '/^subjects:/ {flag=1; next} flag && /^ *- / {gsub("^ *- *",""); print}' "$SUBJECTS" | sed '/^#/d;/^$/d')
-
+# read subjects list
+mapfile -t REFS < <(awk '/^subjects:/ {f=1; next} f && /^ *- / {sub(/^ *- */,""); print}' "$SUBJECTS" | sed '/^#/d;/^$/d')
 echo "Found ${#REFS[@]} subjects."
+
 for REF in "${REFS[@]}"; do
   ORIG="$REF"
 
-  # If it's a tag (no @sha256), lock it to a digest for reproducibility.
+  # Lock tag→digest for reproducibility if needed
   if [[ "$REF" != *@sha256:* ]]; then
     echo "Resolving tag to digest: $REF"
     docker pull "$REF" >/dev/null
     NAME="$(echo "$REF" | awk -F'[:@]' '{print $1}')"
     DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "$REF" | awk -F'@' '{print $2}')"
-    if [ -z "$DIGEST" ]; then
-      echo "Could not resolve digest for $REF"; exit 1
-    fi
+    [[ -n "$DIGEST" ]] || { echo "Could not resolve digest for $REF"; exit 1; }
     REF="${NAME}@${DIGEST}"
   fi
 
-  # If ref points to host-exposed registry, rewrite for Clair's viewpoint.
+  # Rewrite the host-exposed registry (PUSH_REG) to Clair’s viewpoint (PULL_REG_FOR_CLAIR)
   CLAIR_REF="$REF"
   if [[ "$REF" == "$PUSH_REG"* ]]; then
     CLAIR_REF="${REF/$PUSH_REG/$PULL_REG_FOR_CLAIR}"
   fi
 
-  SAFE="$(echo "$ORIG" | sed -e 's|/|_|g' -e 's|:|_|g' -e 's|@|_|g')"
-  OUT="$OUT_DIR/${SAFE}.json"
+# --- inside your for REF in ... loop ---
 
-  echo "Clair scanning (as seen by Clair): $CLAIR_REF"
-  # Don't pass --host; v4 clairctl talks to localhost:6060 by default
-  clairctl report --out json "$CLAIR_REF" > "$OUT"
+SAFE="$(echo "$ORIG" | sed -e 's|/|_|g' -e 's|:|_|g' -e 's|@|_|g')"
+OUT="$OUT_DIR/${SAFE}.json"
+
+echo "Clair scanning (as seen by Clair): $CLAIR_REF"
+# IMPORTANT: do NOT pass --insecure-tls; clairctl doesn't support it.
+# If Clair must pull from an HTTP registry, keep using the compose-attached registry service
+# and the host.docker.internal mapping you already set in .env.
+TMP="$(mktemp)"
+if ! clairctl report --out json "$CLAIR_REF" > "$TMP" 2> "$TMP.err"; then
+  echo "clairctl failed for $CLAIR_REF:"
+  sed -n '1,60p' "$TMP.err"
+  rm -f "$TMP" "$TMP.err"
+  continue
+fi
+
+# Minimal validation: make sure output begins with '{' (JSON object)
+if head -c 1 "$TMP" | grep -q '{'; then
+  mv "$TMP" "$OUT"
+  rm -f "$TMP.err"
   echo "→ $OUT"
-done
+else
+  echo "Non-JSON output for $CLAIR_REF — not saving. First lines:"
+  sed -n '1,20p' "$TMP"
+  echo "(stderr)"
+  sed -n '1,20p' "$TMP.err"
+  rm -f "$TMP" "$TMP.err"
+fi
 
 echo "All Clair reports at $OUT_DIR"
