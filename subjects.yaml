@@ -1,1 +1,7 @@
 subjects:
+  # public examples by tag (will auto-resolve to digest for determinism)
+  - docker.io/library/nginx:1.27
+  - quay.io/projectquay/clair:4.8.0
+
+  # org images: these lines will be appended automatically by import_all.sh
+  # - localhost:5001/private/your-app@sha256:...
