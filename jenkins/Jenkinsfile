@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+  environment {
+    REPORTS = "${WORKSPACE}/reports"
+  }
+  stages {
+    stage('Prepare') {
+      steps {
+        sh 'mkdir -p reports/trivy reports/clair out'
+        sh 'trivy image --download-db-only || docker run --rm aquasec/trivy:latest image --download-db-only'
+      }
+    }
+    stage('Scan - Trivy') {
+      parallel {
+        stage('nginx') { steps { sh 'trivy image --skip-db-update --vuln-type os,library --format json -o reports/trivy/nginx-1.27.json nginx:1.27' } }
+        // repeat per subjects.yaml (or iterate in a shell step)
+      }
+    }
+    stage('Scan - Clair') {
+      steps {
+        sh '''
+          docker compose -f clair/docker-compose.yml up -d
+          sleep 15
+          clairctl manifest docker.io/library/nginx:1.27
+          clairctl report --format json docker.io/library/nginx:1.27 > reports/clair/nginx-1.27.json
+        '''
+      }
+    }
+    stage('Aggregate') {
+      steps { sh 'python3 scripts/aggregate.py reports out/metrics.csv' }
+    }
+    stage('Archive') {
+      steps { archiveArtifacts artifacts: 'reports/**/*.json, out/*.csv', fingerprint: true }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+http_listen_addr: :6060
+introspection_addr: :6061
+log_level: info
+
+indexer:
+  connstring: host=pg port=5432 user=clair password=clair dbname=clair sslmode=disable
+  migrations: true
+
+matcher:
+  connstring: host=pg port=5432 user=clair password=clair dbname=clair sslmode=disable
+  migrations: true
+  indexer_addr: localhost:6060
+
+notifier:
+  connstring: host=pg port=5432 user=clair password=clair dbname=clair sslmode=disable
+  migrations: true
+  indexer_addr: localhost:6060
+  matcher_addr: localhost:6060

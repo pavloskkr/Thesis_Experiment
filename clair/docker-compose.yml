@@ -1,0 +1,36 @@
+services:
+  pg:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: clair
+      POSTGRES_USER: clair
+      POSTGRES_DB: clair
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U clair"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+
+  # Local Docker registry for your TARs (HTTP on 5000 inside, 5001 on host)
+  registry:
+    image: registry:2
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+
+  clair:
+    image: quay.io/projectquay/clair:4.8.0
+    depends_on:
+      pg:
+        condition: service_healthy
+      registry:
+        condition: service_started
+    environment:
+      CLAIR_MODE: combo
+      CLAIR_CONF: /etc/clair/config.yaml
+    volumes:
+      - ./config.yaml:/etc/clair/config.yaml:ro
+    ports:
+      - "6060:6060"   # API
+      - "6061:6061"   # health/metrics
+    restart: unless-stopped
