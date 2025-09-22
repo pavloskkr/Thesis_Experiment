@@ -35,7 +35,7 @@ clairctl version
 
 ## Clone
 ```bash
-git clone <your repo url>
+git clone https://github.com/pavloskkr/Thesis_Experiment
 cd Thesis_Experiment
 ```
 
