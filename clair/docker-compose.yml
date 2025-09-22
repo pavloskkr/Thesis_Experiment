@@ -20,6 +20,7 @@ services:
       REGISTRY_HTTP_TLS_KEY: /certs/tls.key
     volumes:
       - ../certs:/certs:ro
+      - regdata:/var/lib/registry
     restart: unless-stopped
 
   clair:
@@ -30,11 +31,14 @@ services:
     environment:
       CLAIR_MODE: combo
       CLAIR_CONF: /etc/clair/config.yaml
-      SSL_CERT_FILE: /etc/ssl/certs/extra-ca-bundle.crt
+      SSL_CERT_FILE: /usr/local/share/ca-certificates/local-registry-ca.crt
     volumes:
       - ./config.yaml:/etc/clair/config.yaml:ro
-      - ../certs/ca-bundle.crt:/etc/ssl/certs/extra-ca-bundle.crt:ro
+      - ../certs/ca.crt:/usr/local/share/ca-certificates/local-registry-ca.crt:ro
     ports:
-      - "6060:6060"   # API
-      - "6061:6061"   # health/metrics
+      - "6060:6060"
+      - "6061:6061"
     restart: unless-stopped
+
+volumes:
+  regdata: {}
