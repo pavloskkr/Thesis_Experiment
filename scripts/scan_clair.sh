@@ -2,7 +2,8 @@
 set -euo pipefail
 
 SUBJECTS="${1:-subjects.yaml}"
-OUT_DIR="reports/clair"
+DATE_TAG="$(date +%d-%m-%Y)"
+OUT_DIR="reports/clair/$DATE_TAG"
 mkdir -p "$OUT_DIR"
 
 CLAIR_HEALTH="http://localhost:6061/metrics"

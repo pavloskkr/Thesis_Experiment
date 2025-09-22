@@ -1,5 +1,5 @@
 # scripts/aggregate.py
-import json, sys, pathlib, csv, re
+import json, sys, pathlib, csv, re, datetime
 
 SEV_BUCKETS = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]
 RISK_W = {"CRITICAL":5, "HIGH":3, "MEDIUM":1, "LOW":0.5, "UNKNOWN":0}
@@ -112,7 +112,8 @@ def load_items(p: pathlib.Path):
 
 def main(in_dir: str, out_dir: str):
     in_path = pathlib.Path(in_dir)
-    out_path = pathlib.Path(out_dir)
+    date_tag = datetime.datetime.now().strftime("%d-%m-%Y")
+    out_path = pathlib.Path(out_dir) / date_tag
     out_path.mkdir(parents=True, exist_ok=True)
 
     metrics_rows = []

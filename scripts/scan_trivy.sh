@@ -2,7 +2,8 @@
 set -euo pipefail
 
 SUBJ_FILE="${1:-subjects.yaml}"
-REPORT_DIR="reports/trivy"
+DATE_TAG="$(date +%d-%m-%Y)"
+REPORT_DIR="reports/trivy/$DATE_TAG"
 mkdir -p "$REPORT_DIR"
 
 # Decide native vs dockerized Trivy
