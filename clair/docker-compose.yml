@@ -11,25 +11,29 @@ services:
       retries: 20
     restart: unless-stopped
 
-  # Local Docker registry for your TARs (HTTP on 5000 inside, 5001 on host)
+  # Local Docker registry with TLS (5000 inside, 5001 on host)
   registry:
     image: registry:2
-    ports:
-      - "5001:5000"
+    ports: ["5001:5000"]
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/tls.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/tls.key
+    volumes:
+      - ../certs:/certs:ro
     restart: unless-stopped
 
   clair:
     image: quay.io/projectquay/clair:4.8.0
     depends_on:
-      pg:
-        condition: service_healthy
-      registry:
-        condition: service_started
+      pg: { condition: service_healthy }
+      registry: { condition: service_started }
     environment:
       CLAIR_MODE: combo
       CLAIR_CONF: /etc/clair/config.yaml
+      SSL_CERT_FILE: /etc/ssl/certs/extra-ca-bundle.crt
     volumes:
       - ./config.yaml:/etc/clair/config.yaml:ro
+      - ../certs/ca-bundle.crt:/etc/ssl/certs/extra-ca-bundle.crt:ro
     ports:
       - "6060:6060"   # API
       - "6061:6061"   # health/metrics

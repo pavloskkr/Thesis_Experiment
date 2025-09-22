@@ -25,8 +25,10 @@ fi
 if [[ "$RUN_NATIVE" -eq 0 ]]; then
   DOCKER_TRIVY=(docker run --rm
     -e TRIVY_CACHE_DIR=/root/.cache/trivy
+    -e SSL_CERT_DIR=/etc/ssl/certs:/usr/local/share/ca-certificates
     -v "$HOST_PWD:/workspace"
     -v "$HOME/.cache/trivy:/root/.cache/trivy"
+    -v "$PWD/certs/ca.crt:/usr/local/share/ca-certificates/local-registry-ca.crt:ro"
     -w /workspace
     aquasec/trivy:latest)
 fi
@@ -43,6 +45,12 @@ for REF in "${REFS[@]}"; do
     case "$TARGET" in
       localhost:*)  TARGET="host.docker.internal:${TARGET#localhost:}";;
       127.0.0.1:*)  TARGET="host.docker.internal:${TARGET#127.0.0.1:}";;
+    esac
+  fi
+
+  if [[ "$RUN_NATIVE" -eq 0 ]]; then
+    case "$TARGET" in
+      registry:5000/*) TARGET="$(echo "$TARGET" | sed 's#^registry:5000/#host.docker.internal:5001/#')";;
     esac
   fi
 

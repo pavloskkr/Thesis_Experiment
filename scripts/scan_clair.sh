@@ -11,19 +11,16 @@ if ! curl -fsSL "$CLAIR_HEALTH" >/dev/null; then
   exit 1
 fi
 
-# Push-side host view (where you pushed tars)
-PUSH_REG="${PUSH_REGISTRY:-localhost:5001}"
-# Pull-side view for Clair in its container
-PULL_REG_FOR_CLAIR="${PULL_REGISTRY_FOR_CLAIR:-host.docker.internal:5001}"
+export SSL_CERT_FILE="$(pwd)/certs/ca-bundle.crt"
 
-# read subjects list
+PUSH_REG="${PUSH_REGISTRY:-localhost:5001}"
+PULL_REG_FOR_CLAIR="${PULL_REGISTRY_FOR_CLAIR:-registry:5000}"
+
 mapfile -t REFS < <(awk '/^subjects:/ {f=1; next} f && /^ *- / {sub(/^ *- */,""); print}' "$SUBJECTS" | sed '/^#/d;/^$/d')
 echo "Found ${#REFS[@]} subjects."
 
 for REF in "${REFS[@]}"; do
   ORIG="$REF"
-
-  # Lock tag→digest for reproducibility if needed
   if [[ "$REF" != *@sha256:* ]]; then
     echo "Resolving tag to digest: $REF"
     docker pull "$REF" >/dev/null
@@ -33,40 +30,42 @@ for REF in "${REFS[@]}"; do
     REF="${NAME}@${DIGEST}"
   fi
 
-  # Rewrite the host-exposed registry (PUSH_REG) to Clair’s viewpoint (PULL_REG_FOR_CLAIR)
   CLAIR_REF="$REF"
-  if [[ "$REF" == "$PUSH_REG"* ]]; then
-    CLAIR_REF="${REF/$PUSH_REG/$PULL_REG_FOR_CLAIR}"
+  CLAIR_HOST="${PULL_REGISTRY_FOR_CLAIR:-host.docker.internal:5001}"
+  case "$CLAIR_REF" in
+    localhost:5001/*|127.0.0.1:5001/*|host.docker.internal:5001/*|registry:5000/*)
+      CLAIR_REF="$(echo "$REF" \
+        | sed -e "s#^localhost:5001/#$CLAIR_HOST/#" \
+              -e "s#^127\.0\.0\.1:5001/#$CLAIR_HOST/#" \
+              -e "s#^host\.docker\.internal:5001/#$CLAIR_HOST/#" \
+              -e "s#^registry:5000/#$CLAIR_HOST/#")"
+      ;;
+  esac
+
+  SAFE="$(echo "$ORIG" | sed -e 's|/|_|g' -e 's|:|_|g' -e 's|@|_|g')"
+  OUT="$OUT_DIR/${SAFE}.json"
+
+  echo "Clair scanning (as seen by Clair): $CLAIR_REF"
+  TMP="$(mktemp)"
+  if ! clairctl report --out json "$CLAIR_REF" > "$TMP" 2> "$TMP.err"; then
+    echo "clairctl failed for $CLAIR_REF:"
+    sed -n '1,80p' "$TMP.err" || true
+    rm -f "$TMP" "$TMP.err"
+    continue
   fi
 
-# --- inside your for REF in ... loop ---
-
-SAFE="$(echo "$ORIG" | sed -e 's|/|_|g' -e 's|:|_|g' -e 's|@|_|g')"
-OUT="$OUT_DIR/${SAFE}.json"
-
-echo "Clair scanning (as seen by Clair): $CLAIR_REF"
-# IMPORTANT: do NOT pass --insecure-tls; clairctl doesn't support it.
-# If Clair must pull from an HTTP registry, keep using the compose-attached registry service
-# and the host.docker.internal mapping you already set in .env.
-TMP="$(mktemp)"
-if ! clairctl report --out json "$CLAIR_REF" > "$TMP" 2> "$TMP.err"; then
-  echo "clairctl failed for $CLAIR_REF:"
-  sed -n '1,60p' "$TMP.err"
-  rm -f "$TMP" "$TMP.err"
-  continue
-fi
-
-# Minimal validation: make sure output begins with '{' (JSON object)
-if head -c 1 "$TMP" | grep -q '{'; then
-  mv "$TMP" "$OUT"
-  rm -f "$TMP.err"
-  echo "→ $OUT"
-else
-  echo "Non-JSON output for $CLAIR_REF — not saving. First lines:"
-  sed -n '1,20p' "$TMP"
-  echo "(stderr)"
-  sed -n '1,20p' "$TMP.err"
-  rm -f "$TMP" "$TMP.err"
-fi
+  # Save only if it's JSON
+  if head -c 1 "$TMP" | grep -q '{'; then
+    mv "$TMP" "$OUT"
+    rm -f "$TMP.err"
+    echo "→ $OUT"
+  else
+    echo "Non-JSON output for $CLAIR_REF — not saving."
+    sed -n '1,40p' "$TMP"
+    echo "(stderr)"
+    sed -n '1,40p' "$TMP.err"
+    rm -f "$TMP" "$TMP.err"
+  fi
+done
 
 echo "All Clair reports at $OUT_DIR"
