@@ -1,0 +1,165 @@
+Trivy not found; using Dockerized Trivy.
+Found 10 subjects.
+Trivy scanning host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+→ reports/trivy/23-09-2025/localhost_5001_adservice_latest_sha256_b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283.json
+Trivy scanning host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+→ reports/trivy/23-09-2025/localhost_5001_checkoutservice_latest_sha256_5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493.json
+Trivy scanning host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+→ reports/trivy/23-09-2025/localhost_5001_currencyservice_latest_sha256_fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d.json
+Trivy scanning host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+→ reports/trivy/23-09-2025/localhost_5001_emailservice_latest_sha256_579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109.json
+Trivy scanning host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+→ reports/trivy/23-09-2025/localhost_5001_frontend_latest_sha256_72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8.json
+Trivy scanning host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+→ reports/trivy/23-09-2025/localhost_5001_loadgenerator_latest_sha256_081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16.json
+Trivy scanning host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+→ reports/trivy/23-09-2025/localhost_5001_paymentservice_latest_sha256_b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39.json
+Trivy scanning host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+→ reports/trivy/23-09-2025/localhost_5001_productcatalogservice_latest_sha256_f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588.json
+Trivy scanning host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+→ reports/trivy/23-09-2025/localhost_5001_recommendationservice_latest_sha256_f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5.json
+Trivy scanning host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+→ reports/trivy/23-09-2025/localhost_5001_shippingservice_latest_sha256_a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f.json
+All Trivy reports at reports/trivy/23-09-2025
+Found 10 subjects.
+Clair scanning (as seen by Clair): host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+clairctl failed for host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+clairctl failed for host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+clairctl failed for host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+clairctl failed for host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+clairctl failed for host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+clairctl failed for host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+clairctl failed for host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+clairctl failed for host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+clairctl failed for host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+clairctl failed for host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f:
+timeout: failed to run command ‘clairctl’: No such file or directory
+All Clair reports at reports/clair/23-09-2025
+Trivy not found; using Dockerized Trivy.
+Found 10 subjects.
+Trivy scanning host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+→ reports/trivy/24-09-2025/localhost_5001_adservice_latest_sha256_b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283.json
+Trivy scanning host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+→ reports/trivy/24-09-2025/localhost_5001_checkoutservice_latest_sha256_5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493.json
+Trivy scanning host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+→ reports/trivy/24-09-2025/localhost_5001_currencyservice_latest_sha256_fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d.json
+Trivy scanning host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+→ reports/trivy/24-09-2025/localhost_5001_emailservice_latest_sha256_579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109.json
+Trivy scanning host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+→ reports/trivy/24-09-2025/localhost_5001_frontend_latest_sha256_72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8.json
+Trivy scanning host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+→ reports/trivy/24-09-2025/localhost_5001_loadgenerator_latest_sha256_081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16.json
+Trivy scanning host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+→ reports/trivy/24-09-2025/localhost_5001_paymentservice_latest_sha256_b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39.json
+Trivy scanning host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+→ reports/trivy/24-09-2025/localhost_5001_productcatalogservice_latest_sha256_f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588.json
+Trivy scanning host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+→ reports/trivy/24-09-2025/localhost_5001_recommendationservice_latest_sha256_f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5.json
+Trivy scanning host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+→ reports/trivy/24-09-2025/localhost_5001_shippingservice_latest_sha256_a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f.json
+All Trivy reports at reports/trivy/24-09-2025
+Found 10 subjects.
+Clair scanning (as seen by Clair): host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+clairctl failed for host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+clairctl failed for host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+clairctl failed for host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+clairctl failed for host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+clairctl failed for host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+clairctl failed for host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+clairctl failed for host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+clairctl failed for host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+clairctl failed for host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+clairctl failed for host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f:
+timeout: failed to run command ‘clairctl’: No such file or directory
+All Clair reports at reports/clair/24-09-2025
+Trivy not found; using Dockerized Trivy.
+Found 10 subjects.
+Trivy scanning host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+→ reports/trivy/25-09-2025/localhost_5001_adservice_latest_sha256_b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283.json
+Trivy scanning host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+→ reports/trivy/25-09-2025/localhost_5001_checkoutservice_latest_sha256_5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493.json
+Trivy scanning host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+→ reports/trivy/25-09-2025/localhost_5001_currencyservice_latest_sha256_fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d.json
+Trivy scanning host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+→ reports/trivy/25-09-2025/localhost_5001_emailservice_latest_sha256_579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109.json
+Trivy scanning host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+→ reports/trivy/25-09-2025/localhost_5001_frontend_latest_sha256_72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8.json
+Trivy scanning host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+→ reports/trivy/25-09-2025/localhost_5001_loadgenerator_latest_sha256_081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16.json
+Trivy scanning host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+→ reports/trivy/25-09-2025/localhost_5001_paymentservice_latest_sha256_b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39.json
+Trivy scanning host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+→ reports/trivy/25-09-2025/localhost_5001_productcatalogservice_latest_sha256_f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588.json
+Trivy scanning host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+→ reports/trivy/25-09-2025/localhost_5001_recommendationservice_latest_sha256_f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5.json
+Trivy scanning host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+→ reports/trivy/25-09-2025/localhost_5001_shippingservice_latest_sha256_a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f.json
+All Trivy reports at reports/trivy/25-09-2025
+Found 10 subjects.
+Clair scanning (as seen by Clair): host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+clairctl failed for host.docker.internal:5001/adservice:latest@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+clairctl failed for host.docker.internal:5001/checkoutservice:latest@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+clairctl failed for host.docker.internal:5001/currencyservice:latest@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+clairctl failed for host.docker.internal:5001/emailservice:latest@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+clairctl failed for host.docker.internal:5001/frontend:latest@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+clairctl failed for host.docker.internal:5001/loadgenerator:latest@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+clairctl failed for host.docker.internal:5001/paymentservice:latest@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+clairctl failed for host.docker.internal:5001/productcatalogservice:latest@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+clairctl failed for host.docker.internal:5001/recommendationservice:latest@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5:
+timeout: failed to run command ‘clairctl’: No such file or directory
+Clair scanning (as seen by Clair): host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+clairctl failed for host.docker.internal:5001/shippingservice:latest@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f:
+timeout: failed to run command ‘clairctl’: No such file or directory
+All Clair reports at reports/clair/25-09-2025

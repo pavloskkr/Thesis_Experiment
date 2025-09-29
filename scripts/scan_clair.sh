@@ -78,16 +78,16 @@ child_amd64_from_index() {
 # Make image ref reachable from inside Clair container (host mapping)
 map_for_clair_view() {
   local ref="$1"
-  # Use the same var name as in your .env
-  local host="${PULL_REGISTRY_FOR_CLAIR:-host.docker.internal:5001}"
+  # Force Clair's view to the compose service name/port
   case "$ref" in
-    localhost:5001/*)             echo "${ref/localhost:5001/$host}";;
-    127.0.0.1:5001/*)             echo "${ref/127.0.0.1:5001/$host}";;
-    registry:5000/*)              echo "${ref/registry:5000/$host}";;
-    host.docker.internal:5001/*)  echo "$ref";;  # already good
+    localhost:5001/*)             echo "${ref/localhost:5001/registry:5000}";;
+    127.0.0.1:5001/*)             echo "${ref/127.0.0.1:5001/registry:5000}";;
+    host.docker.internal:5001/*)  echo "${ref/host.docker.internal:5001/registry:5000}";;
+    registry:5000/*)              echo "$ref";;   # already good
     *)                            echo "$ref";;
   esac
 }
+
 
 
 safe_name() {

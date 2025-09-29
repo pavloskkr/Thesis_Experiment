@@ -121,7 +121,14 @@ def main(in_dir: str, out_dir: str):
 
     bad = []
 
-    for p in sorted(in_path.rglob("*.json")):
+    date_tag = datetime.datetime.now().strftime("%d-%m-%Y")
+    candidates = []
+    for tooldir in ("trivy", "clair"):
+        day_dir = in_path / tooldir / date_tag
+        if day_dir.exists():
+            candidates.extend(sorted(day_dir.rglob("*.json")))
+
+    for p in candidates:
         tool, items = load_items(p)
         if tool is None:
             bad.append(str(p))
