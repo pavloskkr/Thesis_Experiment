@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- config & output dir (dated) ---
 SUBJECTS="${1:-subjects.yaml}"
 TODAY="$(date +%d-%m-%Y)"
 OUT_DIR="reports/clair/${TODAY}"
@@ -9,137 +8,154 @@ mkdir -p "$OUT_DIR"
 
 CLAIR_HEALTH="http://localhost:6061/metrics"
 if ! curl -fsSL "$CLAIR_HEALTH" >/dev/null; then
-  echo "Clair not healthy. Start it: docker compose -f clair/docker-compose.yml up -d"
+  echo "Clair not healthy. Start it: docker compose up -d"
   exit 1
 fi
 
-# Make Go clients (clairctl) trust our local CA bundle if present
-if [ -f "$(pwd)/certs/ca-bundle.crt" ]; then
-  export SSL_CERT_FILE="$(pwd)/certs/ca-bundle.crt"
-fi
+# Minimal Docker config (avoid credential helpers popups)
+DOCKER_CFG_DIR="$(mktemp -d)"
+trap 'rm -rf "$DOCKER_CFG_DIR"' EXIT
+printf '%s\n' '{"auths":{},"credHelpers":{}}' > "$DOCKER_CFG_DIR/config.json"
+export DOCKER_CONFIG="$DOCKER_CFG_DIR"
 
-PUSH_REG="${PUSH_REGISTRY:-localhost:5001}"
-PULL_REG_FOR_CLAIR="${PULL_REGISTRY_FOR_CLAIR:-host.docker.internal:5001}"
+# ggcr flags so clairctl can talk to local TLS with self-signed
+export GGCR_ALLOW_HTTP=1
+export GGCR_INSECURE_SKIP_VERIFY=1
 
-# --- helpers ---
+# Optional: custom CA bundle for clairctl (if you created one)
+[ -f "$(pwd)/certs/ca-bundle.crt" ] && export SSL_CERT_FILE="$(pwd)/certs/ca-bundle.crt"
 
-# Normalize an image ref to NAME@DIGEST
-lock_to_digest() {
+DEFAULT_SCHEME="https"
+LOCAL_CA="certs/ca.crt"
+
+map_for_clair_view() {
   local ref="$1"
-  if [[ "$ref" == *@sha256:* ]]; then
-    echo "$ref"
-    return 0
+  case "$ref" in
+    localhost:5001/*)             echo "${ref/localhost:5001/host.docker.internal:5001}";;
+    127.0.0.1:5001/*)             echo "${ref/127.0.0.1:5001/host.docker.internal:5001}";;
+    registry:5000/*)              echo "${ref/registry:5000/host.docker.internal:5001}";;
+    host.docker.internal:5001/*)  echo "$ref";;
+    *)                            echo "$ref";;
+  esac
+}
+
+# Query registry to make sure the tag exists; if not, pick a valid one (latest or first)
+choose_valid_tag() {
+  local host_repo="$1"   # e.g. localhost:5001/library/alpine
+  local want_tag="$2"
+  local host="${host_repo%%/*}"
+  local repo="${host_repo#*/}"
+  local url="${DEFAULT_SCHEME}://${host}/v2/${repo}/tags/list"
+
+  local tags_json
+  if ! tags_json="$(curl -fsS --cacert "$LOCAL_CA" "$url" 2>/dev/null)"; then
+    echo "$want_tag"; return 0
   fi
-  # pull to ensure local resolver has it
+
+  local tags=()
+  if command -v jq >/dev/null 2>&1; then
+    mapfile -t tags < <(printf '%s\n' "$tags_json" | jq -r '.tags[]?' | sed '/^null$/d')
+  else
+    mapfile -t tags < <(printf '%s\n' "$tags_json" | tr -d '\n ' \
+      | sed -n 's/.*"tags":\[\([^]]*\)\].*/\1/p' | tr ',' '\n' | sed -e 's/"//g' -e '/^$/d')
+  fi
+  [[ ${#tags[@]} -eq 0 ]] && { echo "$want_tag"; return 0; }
+
+  local t
+  for t in "${tags[@]}"; do
+    [[ "$t" == "$want_tag" ]] && { echo "$want_tag"; return 0; }
+  done
+  for t in "${tags[@]}"; do
+    [[ "$t" == "latest" ]] && { echo "latest"; return 0; }
+  done
+  echo "${tags[0]}"
+}
+
+# docker pull <name:tag> then output NAME@sha256:... (single digest)
+lock_to_digest() {
+  local ref="$1"             # name:tag
   docker pull "$ref" >/dev/null
-  local name; name="$(echo "$ref" | awk -F'[:@]' '{print $1}')"
-  local dig;  dig="$(docker inspect --format='{{index .RepoDigests 0}}' "$ref" | awk -F'@' '{print $2}')"
-  if [ -z "$dig" ]; then
+  local name="${ref%:*}"
+  local dig
+  dig="$(docker inspect --format='{{index .RepoDigests 0}}' "$ref" 2>/dev/null | awk -F'@' '{print $2}')"
+  if [[ -z "${dig:-}" ]]; then
     echo "ERR: could not resolve digest for $ref" >&2
     return 1
   fi
   echo "${name}@${dig}"
 }
 
-# If REF is a manifest index, rewrite to linux/amd64 child digest using docker (not skopeo)
+# If manifest list, choose linux/amd64 child digest (best-effort)
 child_amd64_from_index() {
   local ref="$1"
-  # docker manifest inspect prints JSON (index or single manifest)
   local js; js="$(docker manifest inspect "$ref" 2>/dev/null || true)"
-  if [ -z "$js" ]; then
-    # can't inspect (private registry auth/TLS/etc.) — just keep ref
-    echo "$ref"
-    return 0
-  fi
+  [[ -z "$js" ]] && { echo "$ref"; return 0; }
 
-  # detect mediaType (quick & dirty)
-  local mt; mt="$(printf '%s' "$js" | tr -d '\n' | sed -n 's/.*"mediaType"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+  local mt
+  mt="$(printf '%s' "$js" | tr -d '\n' | sed -n 's/.*"mediaType"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
 
   case "$mt" in
     application/vnd.docker.distribution.manifest.list.v2+json|application/vnd.oci.image.index.v1+json)
-      # Try to extract linux/amd64 child digest (no jq)
       local child
       child="$(printf '%s' "$js" \
         | awk 'BEGIN{RS="\\{";FS="\\n"} /"platform"/ && /"os"[[:space:]]*:[[:space:]]*"linux"/ && /"architecture"[[:space:]]*:[[:space:]]*"amd64"/ {print "{"$0}' \
         | sed -n 's/.*"digest"[[:space:]]*:[[:space:]]*"\(sha256:[^"]*\)".*/\1/p' \
         | head -n1)"
-      if [ -n "$child" ]; then
-        local name_only="${ref%@*}"
-        echo "${name_only}@${child}"
+      if [[ -n "$child" ]]; then
+        echo "${ref%@*}@${child}"
         return 0
       fi
       ;;
   esac
 
-  # Not an index (or couldn’t find child) — keep as-is
   echo "$ref"
 }
 
-# Make image ref reachable from inside Clair container (host mapping)
-map_for_clair_view() {
-  local ref="$1"
-  # Force Clair's view to the compose service name/port
-  case "$ref" in
-    localhost:5001/*)             echo "${ref/localhost:5001/registry:5000}";;
-    127.0.0.1:5001/*)             echo "${ref/127.0.0.1:5001/registry:5000}";;
-    host.docker.internal:5001/*)  echo "${ref/host.docker.internal:5001/registry:5000}";;
-    registry:5000/*)              echo "$ref";;   # already good
-    *)                            echo "$ref";;
-  esac
-}
+safe_name() { echo "$1" | sed -e 's|/|_|g' -e 's|:|_|g' -e 's|@|_|g'; }
 
-
-
-safe_name() {
-  echo "$1" | sed -e 's|/|_|g' -e 's|:|_|g' -e 's|@|_|g'
-}
-
-# --- read subjects ---
-mapfile -t REFS < <(awk '/^subjects:/ {f=1; next} f && /^ *- / {sub(/^ *- */,""); print}' "$SUBJECTS" | sed '/^#/d;/^$/d')
+# ---- load subjects (strip CRs) ----
+mapfile -t REFS < <(awk '/^subjects:/ {f=1; next} f && /^ *- / {sub(/^ *- */,""); print}' "$SUBJECTS" \
+                   | sed 's/\r$//' | sed '/^#/d;/^$/d')
 echo "Found ${#REFS[@]} subjects."
 
-# --- loop ---
 for ORIG in "${REFS[@]}"; do
-  # 1) lock to digest
-  REF="$ORIG"
-  if [[ "$REF" != *@sha256:* ]]; then
-    echo "Resolving tag to digest: $REF"
-    if ! REF="$(lock_to_digest "$REF")"; then
-      echo "  ! skip $ORIG (digest resolution failed)"
-      continue
-    fi
+  ORIG="$(echo "$ORIG" | sed 's/\r$//')"
+
+  # Derive NAME and TAG from original ref; if missing tag, use 'latest'
+  if [[ "$ORIG" == *@sha256:* ]]; then
+    BASE_NO_DIG="${ORIG%@*}"                 # strip @sha256
+  else
+    BASE_NO_DIG="$ORIG"
   fi
 
-  # Compute components we’ll reuse
-# Compute components we’ll reuse (derive tag from the ORIGINAL ref, not from the digest)
-# ORIG might be like: host:5001/repo:tag@sha256:...
-BASE_NO_DIG="${ORIG%@*}"          # strip @sha256:... if present
-if [[ "$BASE_NO_DIG" == *:* ]]; then
-  ORIG_TAG="${BASE_NO_DIG##*:}"   # text after last ':' → the tag
-else
-  ORIG_TAG="latest"
-fi
+  if [[ "$BASE_NO_DIG" == *:* ]]; then
+    ORIG_TAG="${BASE_NO_DIG##*:}"
+    NAME_ONLY="${BASE_NO_DIG%:*}"
+  else
+    ORIG_TAG="latest"
+    NAME_ONLY="$BASE_NO_DIG"
+  fi
 
-# NAME_ONLY = registry/repo (no tag, no digest) — take BASE_NO_DIG minus ':tag' if present
-NAME_ONLY="${BASE_NO_DIG%:*}"     # host:5001/repo
+  # Validate tag against registry (fixes "latest" not present)
+  VALID_TAG="$(choose_valid_tag "$NAME_ONLY" "$ORIG_TAG")"
+  [[ "$VALID_TAG" != "$ORIG_TAG" ]] && echo "  ↺ tag '$ORIG_TAG' not found for $NAME_ONLY, using '$VALID_TAG' instead"
+  TAG_REF="${NAME_ONLY}:${VALID_TAG}"
 
-# Build a clean tag ref and then map it to Clair’s viewpoint
-TAG_REF="${NAME_ONLY}:${ORIG_TAG}"
-CLAIR_TAG_REF="$(map_for_clair_view "$TAG_REF")"
+  # Lock to digest for stable Clair input
+  echo "Resolving tag to digest: $TAG_REF"
+  if ! REF="$(lock_to_digest "$TAG_REF")"; then
+    echo "  ! skip $ORIG (digest resolution failed)"
+    continue
+  fi
 
-
-  # 2) if multi-arch index, pick linux/amd64 child (best-effort)
+  # If multi-arch index, pick linux/amd64 child
   AMD64_REF="$(child_amd64_from_index "$REF")"
-  if [[ "$AMD64_REF" != "$REF" ]]; then
-    echo "  ↳ manifest list detected; using linux/amd64 child: ${AMD64_REF#*@}"
-    REF="$AMD64_REF"
-  fi
+  [[ "$AMD64_REF" != "$REF" ]] && { echo "  ↳ manifest list detected; using linux/amd64: ${AMD64_REF#*@}"; REF="$AMD64_REF"; }
 
-  # 3) map to Clair’s viewpoint (inside container)
+  # Map both digest and tag refs to Clair’s viewpoint
   CLAIR_REF="$(map_for_clair_view "$REF")"
   CLAIR_TAG_REF="$(map_for_clair_view "$TAG_REF")"
 
-  # 4) scan with fallback
   SAFE="$(safe_name "$ORIG")"
   OUT="${OUT_DIR}/${SAFE}.json"
   TMP="$(mktemp)"
@@ -150,7 +166,7 @@ CLAIR_TAG_REF="$(map_for_clair_view "$TAG_REF")"
     :
   else
     if grep -q 'MANIFEST_UNKNOWN' "$ERR"; then
-      echo "  ↺ digest not resolvable by registry; retrying by tag: $CLAIR_TAG_REF"
+      echo "  ↺ digest not resolvable; retrying by tag: $CLAIR_TAG_REF"
       : >"$TMP"; : >"$ERR"
       if ! timeout 90s clairctl report --out json "$CLAIR_TAG_REF" >"$TMP" 2>"$ERR"; then
         echo "clairctl failed for $CLAIR_TAG_REF:"
@@ -166,7 +182,6 @@ CLAIR_TAG_REF="$(map_for_clair_view "$TAG_REF")"
     fi
   fi
 
-  # Save only if it's JSON
   if head -c 1 "$TMP" | grep -q '{'; then
     mv "$TMP" "$OUT"
     rm -f "$ERR" || true
@@ -181,4 +196,3 @@ CLAIR_TAG_REF="$(map_for_clair_view "$TAG_REF")"
 done
 
 echo "All Clair reports at $OUT_DIR"
-

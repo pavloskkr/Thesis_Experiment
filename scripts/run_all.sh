@@ -30,6 +30,11 @@ echo "# Clair is healthy."
 ./scripts/scan_trivy.sh "${SUBJECTS_FILE}"
 ./scripts/scan_clair.sh "${SUBJECTS_FILE}"
 
+# --- Pin repo root and Python path ---
+REPO_ROOT="$(cd "$(dirname "$0")/.."; pwd)"
+cd "$REPO_ROOT"
+export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+
 # --- aggregate into out/<date> ---
-python3 scripts/aggregate.py reports "${OUT_DIR}"
+python3 -m scripts.aggregate reports "${OUT_DIR}"
 echo "# Aggregates written to ${OUT_DIR}"

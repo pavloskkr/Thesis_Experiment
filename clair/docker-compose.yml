@@ -16,10 +16,10 @@ services:
     image: registry:2
     ports:
       - "5001:5000"
-      - "5000:5000"
     environment:
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/tls.crt
       REGISTRY_HTTP_TLS_KEY: /certs/tls.key
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"   # <— add this
     volumes:
       - ../certs:/certs:ro
       - regdata:/var/lib/registry

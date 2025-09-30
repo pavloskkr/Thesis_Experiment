@@ -1,0 +1,16 @@
+docker.io/library/nginx:1.29.1
+docker.io/library/alpine:3.22.1
+docker.io/library/node:24.9.0-alpine3.21
+docker.io/library/traefik:v3.5.3
+docker.io/library/rabbitmq:4.2-rc
+docker.io/library/tomcat:11.0.11-jdk25-temurin-noble
+docker.io/library/matomo:5.4.0
+docker.io/library/haskell:9.8.4-slim-bullseye
+istio/examples-bookinfo-reviews-v3:1.20.3
+istio/examples-bookinfo-mysqldb:1.20.3
+istio/examples-bookinfo-productpage-v-flooding:1.20.3
+istio/examples-bookinfo-mongodb:1.20.3
+istio/examples-bookinfo-details-v2:1.20.3
+istio/examples-bookinfo-ratings-v2:1.20.3
+istio/examples-bookinfo-ratings-v-faulty:1.20.3
+istio/examples-bookinfo-ratings-v-buggy
