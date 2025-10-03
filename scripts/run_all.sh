@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- make cron environment sane ---
+export SHELL="/bin/bash"
+export HOME="${HOME:-/home/$USER}"
+# Ensure typical interactive paths + Go bin where clairctl is often installed
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${HOME}/.local/bin:${HOME}/bin:${HOME}/go/bin:${PATH}"
+
+# --- resolve repo root & enter it (works from cron) ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${REPO_ROOT}"
+
 # --- config ---
 COMPOSE_FILE="clair/docker-compose.yml"
 CLAIR_HEALTH_URL="http://localhost:6061/metrics"
@@ -29,11 +40,6 @@ echo "# Clair is healthy."
 # --- scans (each script creates its own dated reports/<tool>/<dd-mm-yyyy>/...) ---
 ./scripts/scan_trivy.sh "${SUBJECTS_FILE}"
 ./scripts/scan_clair.sh "${SUBJECTS_FILE}"
-
-# --- Pin repo root and Python path ---
-REPO_ROOT="$(cd "$(dirname "$0")/.."; pwd)"
-cd "$REPO_ROOT"
-export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 
 # --- aggregate into out/<date> ---
 python3 -m scripts.aggregate reports "${OUT_DIR}"

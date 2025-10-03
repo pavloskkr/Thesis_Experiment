@@ -40,6 +40,8 @@ services:
     ports:
       - "6060:6060"
       - "6061:6061"
+    extra_hosts:
+      - "registry.host:host-gateway"
     restart: unless-stopped
 
 volumes:

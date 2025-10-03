@@ -1,5 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -euo pipefail
+
+# cron-safe PATH
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${HOME:-}/.local/bin:${HOME:-}/bin:${HOME:-}/go/bin:${PATH}"
 
 SUBJECTS="${1:-subjects.yaml}"
 TODAY="$(date +%d-%m-%Y)"
@@ -7,7 +10,7 @@ OUT_DIR="reports/clair/${TODAY}"
 mkdir -p "$OUT_DIR"
 
 CLAIR_HEALTH="http://localhost:6061/metrics"
-if ! curl -fsSL "$CLAIR_HEALTH" >/dev/null; then
+if ! curl -fsSL "$CLAIR_HEALTH" >/dev/null 2>&1; then
   echo "Clair not healthy. Start it: docker compose up -d"
   exit 1
 fi
