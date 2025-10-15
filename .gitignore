@@ -2,6 +2,7 @@
 /reports
 /out
 /out_pre_trivy_upgrade
+/reports_pre_trivy_upgrade
 /certs
 /.idea
 subjects.yaml
