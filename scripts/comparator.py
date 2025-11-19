@@ -256,6 +256,12 @@ def write_csv(path: pathlib.Path, rows, fieldnames):
 # ---------- main ----------
 
 def main():
+    pair_rows = []   # for cve_pairwise_diffs.csv
+    uni_int_rows = []# for cve_pairwise_union_intersection.csv
+    daily_change_rows = []  # <-- NEW: per-pair, per-tool totals
+    grand_new = 0
+    grand_removed = 0
+
     tool_dates = find_tool_dates()   # e.g. {'trivy':['01-10-2025',...], 'clair':[...]}
 
     # union of all dates that appear in any tool folder
@@ -274,6 +280,18 @@ def main():
         idx = build_day_index(d)
         day_indexes[d] = idx
         daily_total_rows += collect_daily_totals(d, idx)
+
+    # Track first seen date per (tool, CVE)
+    first_seen = {}  # (tool, cve) -> date
+    for d in dates:
+        idx = day_indexes[d]
+        for tool, images in idx.items():
+            for img, cves in images.items():
+                # cves is a set in your current code
+                for cve in cves:
+                    key = (tool, cve)
+                    if key not in first_seen:
+                        first_seen[key] = parse_date_folder(d)
 
     # Print header
     print("="*78)
@@ -297,6 +315,14 @@ def main():
             tnew = pair_summary["tool_totals"].get(tool,{}).get("new",0)
             trem = pair_summary["tool_totals"].get(tool,{}).get("removed",0)
             print(f"[{tool}]  new: {tnew:4d}   removed: {trem:4d}")
+            # NEW: record per-pair totals for CSV
+            daily_change_rows.append({
+                "from_date": d1,
+                "to_date": d2,
+                "tool": tool,
+                "new_total": tnew,
+                "removed_total": trem,
+            })
         print(f"TOTAL   new: {pair_summary['total_new']:4d}   removed: {pair_summary['total_removed']:4d}")
         print()
 
@@ -311,6 +337,38 @@ def main():
         })
         grand_new += pair_summary["total_new"]
         grand_removed += pair_summary["total_removed"]
+
+    # ----- First-seen analysis: which tool leads for shared CVEs? -----
+    first_rows = []
+    cve_to_first = defaultdict(dict)  # cve -> {tool: date}
+
+    for (tool, cve), dt_first in first_seen.items():
+        cve_to_first[cve][tool] = dt_first
+
+    for cve, m in cve_to_first.items():
+        if "trivy" not in m or "clair" not in m:
+            continue  # appears in only one tool; skip
+        dt_t = m["trivy"]
+        dt_c = m["clair"]
+        diff = (dt_t - dt_c).days
+        if diff == 0:
+            leading = "tie"
+        elif diff < 0:
+            leading = "trivy"  # Trivy saw it earlier
+        else:
+            leading = "clair"  # Clair saw it earlier
+
+        first_rows.append({
+            "cve": cve,
+            "first_trivy": dt_t.strftime("%d-%m-%Y"),
+            "first_clair": dt_c.strftime("%d-%m-%Y"),
+            "leading_tool": leading,
+            "day_diff": diff,
+        })
+
+    write_csv(OUT_DIR/"cve_first_seen.csv",
+              first_rows,
+              fieldnames=["cve","first_trivy","first_clair","leading_tool","day_diff"])
 
     # SUMMARY
     print("="*78)
@@ -343,6 +401,10 @@ def main():
               uni_int_rows,
               fieldnames=["from_date","to_date","union","intersection","only_trivy","only_clair"])
 
+    write_csv(OUT_DIR/"cve_daily_changes.csv",
+              daily_change_rows,
+              fieldnames=["from_date","to_date","tool","new_total","removed_total"])
+
     # ----- Plot: total CVEs per day per tool -----
     try:
         df = pd.read_csv(OUT_DIR / "cve_daily_totals.csv")
@@ -373,6 +435,107 @@ def main():
     except Exception as e:
         print("⚠️ Could not generate daily CVE totals plot:", e)
 
+    # ----- Plot: daily new/removed CVEs per tool -----
+    try:
+        df_changes = pd.read_csv(OUT_DIR / "cve_daily_changes.csv")
+        # Convert to a single label "window" for x-axis (e.g., "10-10→11-10")
+        df_changes["window"] = df_changes["from_date"] + "→" + df_changes["to_date"]
+
+        # Sort windows by from_date
+        df_changes["from_dt"] = pd.to_datetime(df_changes["from_date"], format="%d-%m-%Y")
+        df_changes = df_changes.sort_values(["from_dt", "tool"])
+
+        fig, ax = plt.subplots(figsize=(9, 5))
+
+        for tool in ("trivy", "clair"):
+            dft = df_changes[df_changes["tool"] == tool]
+            if dft.empty:
+                continue
+            ax.plot(
+                dft["window"],
+                dft["new_total"],
+                marker="o",
+                label=f"{tool} new"
+            )
+            ax.plot(
+                dft["window"],
+                dft["removed_total"],
+                marker="x",
+                linestyle="--",
+                label=f"{tool} removed"
+            )
+
+        ax.set_title("Daily CVE additions and removals per tool")
+        ax.set_xlabel("Date window")
+        ax.set_ylabel("Count of CVEs")
+        plt.xticks(rotation=45, ha="right")
+        ax.legend()
+        plt.tight_layout()
+
+        png2 = OUT_DIR / "fig_cve_daily_changes.png"
+        svg2 = OUT_DIR / "fig_cve_daily_changes.svg"
+        plt.savefig(png2, dpi=200, bbox_inches="tight")
+        plt.savefig(svg2, bbox_inches="tight")
+        plt.close()
+
+        print("Wrote daily CVE changes plot:")
+        print(" -", png2)
+        print(" -", svg2)
+    except Exception as e:
+        print("⚠️ Could not generate daily CVE changes plot:", e)
+
+    # ----- Plot: which tool sees CVEs first? -----
+    try:
+        df_first = pd.read_csv(OUT_DIR / "cve_first_seen.csv")
+
+        # Ensure day_diff is numeric
+        df_first["day_diff"] = pd.to_numeric(df_first["day_diff"], errors="coerce").fillna(0)
+
+        # 1) Bar chart: count of CVEs by leading_tool
+        counts = df_first["leading_tool"].value_counts()
+
+        fig, ax = plt.subplots(figsize=(5, 4))
+        ax.bar(counts.index, counts.values)
+        ax.set_title("Leading tool for shared CVEs")
+        ax.set_xlabel("Leading tool")
+        ax.set_ylabel("Number of CVEs")
+        plt.tight_layout()
+
+        png_lead = OUT_DIR / "fig_cve_first_seen_leading_tool.png"
+        svg_lead = OUT_DIR / "fig_cve_first_seen_leading_tool.svg"
+        plt.savefig(png_lead, dpi=200, bbox_inches="tight")
+        plt.savefig(svg_lead, bbox_inches="tight")
+        plt.close()
+
+        print("Wrote first-seen leading-tool plot:")
+        print(" -", png_lead)
+        print(" -", svg_lead)
+
+        # 2) Histogram: distribution of day_diff (exclude ties if you want)
+        df_non_tie = df_first[df_first["leading_tool"] != "tie"]
+
+        if not df_non_tie.empty:
+            fig, ax = plt.subplots(figsize=(6, 4))
+            ax.hist(df_non_tie["day_diff"], bins=11, edgecolor="black")
+            ax.set_title("Distribution of first-seen lag between tools")
+            ax.set_xlabel("Trivy date − Clair date (days)")
+            ax.set_ylabel("Number of CVEs")
+            plt.tight_layout()
+
+            png_diff = OUT_DIR / "fig_cve_first_seen_daydiff.png"
+            svg_diff = OUT_DIR / "fig_cve_first_seen_daydiff.svg"
+            plt.savefig(png_diff, dpi=200, bbox_inches="tight")
+            plt.savefig(svg_diff, bbox_inches="tight")
+            plt.close()
+
+            print("Wrote first-seen day-diff plot:")
+            print(" -", png_diff)
+            print(" -", svg_diff)
+        else:
+            print("No non-tie CVEs to plot day_diff histogram.")
+
+    except Exception as e:
+        print("⚠️ Could not generate first-seen plots:", e)
 
 if __name__ == "__main__":
     main()
