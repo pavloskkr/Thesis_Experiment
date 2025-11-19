@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # comparator.py  —  CVE-centric diffs + daily summaries
 #
-# Drop-in: put this file in ./scripts/comparator.py and run:
-#   python3 ./scripts/comparator.py
-#
 # Parses raw reports JSON under reports/{trivy,clair}/<DD-MM-YYYY>/*.json,
-# builds per-day CVE sets, compares consecutive dates, prints/exports stats.
+# builds per-day CVE sets, compares consecutive dates, prints/exports stats
+# and writes a line chart of total CVEs per day per tool.
 
 import re
 import csv
@@ -14,6 +12,9 @@ import json
 import pathlib
 import datetime
 from collections import defaultdict
+
+import pandas as pd
+import matplotlib.pyplot as plt
 
 BASE_REPORTS = pathlib.Path("reports")
 OUT_DIR = pathlib.Path("out")
@@ -93,7 +94,7 @@ def extract_cves_clair(js):
     if not isinstance(js, dict):
         return out
 
-    # Common top-level array
+    # Common top-level array/dict
     vulns = js.get("vulnerabilities") or js.get("Vulnerabilities") or []
     for v in vulns:
         if isinstance(v, dict):
@@ -341,6 +342,36 @@ def main():
     write_csv(OUT_DIR/"cve_pairwise_union_intersection.csv",
               uni_int_rows,
               fieldnames=["from_date","to_date","union","intersection","only_trivy","only_clair"])
+
+    # ----- Plot: total CVEs per day per tool -----
+    try:
+        df = pd.read_csv(OUT_DIR / "cve_daily_totals.csv")
+        # ensure numeric
+        df["total_cves"] = pd.to_numeric(df["total_cves"], errors="coerce").fillna(0)
+
+        # pivot to date x tool
+        pivot = df.pivot(index="date", columns="tool", values="total_cves")
+
+        # reindex by sorted dates to ensure order on x-axis
+        pivot = pivot.reindex(dates)
+
+        ax = pivot.plot(marker="o", figsize=(8, 5))
+        ax.set_title("Total unique CVEs per day by tool")
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Unique CVEs")
+
+        plt.tight_layout()
+        png = OUT_DIR / "fig_cve_daily_totals.png"
+        svg = OUT_DIR / "fig_cve_daily_totals.svg"
+        plt.savefig(png, dpi=200, bbox_inches="tight")
+        plt.savefig(svg, bbox_inches="tight")
+        plt.close()
+
+        print("Wrote daily CVE totals plot:")
+        print(" -", png)
+        print(" -", svg)
+    except Exception as e:
+        print("⚠️ Could not generate daily CVE totals plot:", e)
 
 
 if __name__ == "__main__":

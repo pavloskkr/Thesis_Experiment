@@ -3140,3 +3140,209 @@ clairctl failed for host.docker.internal:5001/org/security/tool-service-authenti
 [90m2025-10-14T08:01:13+03:00[0m [31mERR[0m [36merror=[0m[31m[1m"Get \"https://host.docker.internal:5001/v2/\": dial tcp 192.168.1.11:5001: connect: connection refused"[0m[0m
 All Clair reports at reports/clair/14-10-2025
 # Aggregates written to out
+# Ensuring Clair stack is up...
+ Container clair-pg-1  Running
+ Container clair-registry-1  Recreate
+ Container clair-registry-1  Recreated
+ Container clair-clair-1  Recreate
+ Container clair-clair-1  Recreated
+ Container clair-registry-1  Starting
+ Container clair-registry-1  Started
+ Container clair-pg-1  Waiting
+ Container clair-pg-1  Healthy
+ Container clair-clair-1  Starting
+ Container clair-clair-1  Started
+# Waiting for Clair to become healthy at http://localhost:6061/metrics ...
+# Clair is healthy.
+Trivy not found; using Dockerized Trivy.
+Found 34 subjects.
+WARN: Container trivy lacks 'db update'; proceeding without explicit prefetch.
+Trivy scanning: host.docker.internal:5001/gcp/adservice:latest   (from localhost:5001/gcp/adservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_adservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/checkoutservice:latest   (from localhost:5001/gcp/checkoutservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_checkoutservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/currencyservice:latest   (from localhost:5001/gcp/currencyservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_currencyservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/emailservice:latest   (from localhost:5001/gcp/emailservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_emailservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/frontend:latest   (from localhost:5001/gcp/frontend:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_frontend_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/loadgenerator:latest   (from localhost:5001/gcp/loadgenerator:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_loadgenerator_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/paymentservice:latest   (from localhost:5001/gcp/paymentservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_paymentservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/productcatalogservice:latest   (from localhost:5001/gcp/productcatalogservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_productcatalogservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/recommendationservice:latest   (from localhost:5001/gcp/recommendationservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_recommendationservice_latest.json
+Trivy scanning: host.docker.internal:5001/gcp/shippingservice:latest   (from localhost:5001/gcp/shippingservice:latest)
+→ reports/trivy/16-10-2025/localhost_5001_gcp_shippingservice_latest.json
+Trivy scanning: host.docker.internal:5001/istio/details-v2:1.20.3   (from localhost:5001/istio/details-v2:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_details-v2_1.20.3.json
+Trivy scanning: host.docker.internal:5001/istio/mongodb:1.20.3   (from localhost:5001/istio/mongodb:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_mongodb_1.20.3.json
+Trivy scanning: host.docker.internal:5001/istio/mysqldb:1.20.3   (from localhost:5001/istio/mysqldb:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_mysqldb_1.20.3.json
+Trivy scanning: host.docker.internal:5001/istio/productpage-v-flooding:1.20.3   (from localhost:5001/istio/productpage-v-flooding:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_productpage-v-flooding_1.20.3.json
+Trivy scanning: host.docker.internal:5001/istio/ratings-v-buggy:latest   (from localhost:5001/istio/ratings-v-buggy:latest)
+→ reports/trivy/16-10-2025/localhost_5001_istio_ratings-v-buggy_latest.json
+Trivy scanning: host.docker.internal:5001/istio/ratings-v-faulty:1.20.3   (from localhost:5001/istio/ratings-v-faulty:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_ratings-v-faulty_1.20.3.json
+Trivy scanning: host.docker.internal:5001/istio/ratings-v2:1.20.3   (from localhost:5001/istio/ratings-v2:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_ratings-v2_1.20.3.json
+Trivy scanning: host.docker.internal:5001/istio/reviews-v3:1.20.3   (from localhost:5001/istio/reviews-v3:1.20.3)
+→ reports/trivy/16-10-2025/localhost_5001_istio_reviews-v3_1.20.3.json
+Trivy scanning: host.docker.internal:5001/library/alpine:3.22.1   (from localhost:5001/library/alpine:3.22.1)
+→ reports/trivy/16-10-2025/localhost_5001_library_alpine_3.22.1.json
+Trivy scanning: host.docker.internal:5001/library/haskell:9.8.4-slim-bullseye   (from localhost:5001/library/haskell:9.8.4-slim-bullseye)
+→ reports/trivy/16-10-2025/localhost_5001_library_haskell_9.8.4-slim-bullseye.json
+Trivy scanning: host.docker.internal:5001/library/matomo:5.4.0   (from localhost:5001/library/matomo:5.4.0)
+→ reports/trivy/16-10-2025/localhost_5001_library_matomo_5.4.0.json
+Trivy scanning: host.docker.internal:5001/library/nginx:1.29.1   (from localhost:5001/library/nginx:1.29.1)
+→ reports/trivy/16-10-2025/localhost_5001_library_nginx_1.29.1.json
+Trivy scanning: host.docker.internal:5001/library/node:24.9.0-alpine3.21   (from localhost:5001/library/node:24.9.0-alpine3.21)
+→ reports/trivy/16-10-2025/localhost_5001_library_node_24.9.0-alpine3.21.json
+Trivy scanning: host.docker.internal:5001/library/rabbitmq:4.2-rc   (from localhost:5001/library/rabbitmq:4.2-rc)
+→ reports/trivy/16-10-2025/localhost_5001_library_rabbitmq_4.2-rc.json
+Trivy scanning: host.docker.internal:5001/library/tomcat:11.0.11-jdk25-temurin-noble   (from localhost:5001/library/tomcat:11.0.11-jdk25-temurin-noble)
+→ reports/trivy/16-10-2025/localhost_5001_library_tomcat_11.0.11-jdk25-temurin-noble.json
+Trivy scanning: host.docker.internal:5001/library/traefik:v3.5.3   (from localhost:5001/library/traefik:v3.5.3)
+→ reports/trivy/16-10-2025/localhost_5001_library_traefik_v3.5.3.json
+Trivy scanning: host.docker.internal:5001/org/docker/kafka-setup-topics:2024.10.17-2   (from localhost:5001/org/docker/kafka-setup-topics:2024.10.17-2)
+→ reports/trivy/16-10-2025/localhost_5001_org_docker_kafka-setup-topics_2024.10.17-2.json
+Trivy scanning: host.docker.internal:5001/org/itdev/ibe-tool-liquibase:local   (from localhost:5001/org/itdev/ibe-tool-liquibase:local)
+→ reports/trivy/16-10-2025/localhost_5001_org_itdev_ibe-tool-liquibase_local.json
+Trivy scanning: host.docker.internal:5001/org/plat/bscjs:latest   (from localhost:5001/org/plat/bscjs:latest)
+→ reports/trivy/16-10-2025/localhost_5001_org_plat_bscjs_latest.json
+Trivy scanning: host.docker.internal:5001/org/security/tool-service-authentication-admin-realm:2025.7.21-feature.plj292.dev.9   (from localhost:5001/org/security/tool-service-authentication-admin-realm:2025.7.21-feature.plj292.dev.9)
+→ reports/trivy/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.7.21-feature.plj292.dev.9.json
+Trivy scanning: host.docker.internal:5001/org/security/tool-service-authentication-admin-realm:2025.9.10-198   (from localhost:5001/org/security/tool-service-authentication-admin-realm:2025.9.10-198)
+→ reports/trivy/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.9.10-198.json
+Trivy scanning: host.docker.internal:5001/org/security/tool-service-authentication-admin-realm:2025.8.1-175   (from localhost:5001/org/security/tool-service-authentication-admin-realm:2025.8.1-175)
+→ reports/trivy/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.8.1-175.json
+Trivy scanning: host.docker.internal:5001/org/security/tool-service-authentication-admin-realm:2025.8.7-177   (from localhost:5001/org/security/tool-service-authentication-admin-realm:2025.8.7-177)
+→ reports/trivy/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.8.7-177.json
+Trivy scanning: host.docker.internal:5001/org/security/tool-service-authentication-admin-realm:2025.7.16-feature.plj293.dev.2   (from localhost:5001/org/security/tool-service-authentication-admin-realm:2025.7.16-feature.plj293.dev.2)
+→ reports/trivy/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.7.16-feature.plj293.dev.2.json
+All Trivy reports at reports/trivy/16-10-2025
+Found 34 subjects.
+Resolving tag to digest: localhost:5001/gcp/adservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/adservice@sha256:b3b0e2dd4fd092ce35bd692be3ed50461095c3af6c7151461a48009f3f57f283
+→ reports/clair/16-10-2025/localhost_5001_gcp_adservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/checkoutservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/checkoutservice@sha256:5916add3717ebacd8bbd434ee405967cc3b8ca19aaacbc9ae68f8f51a0005493
+→ reports/clair/16-10-2025/localhost_5001_gcp_checkoutservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/currencyservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/currencyservice@sha256:fdf3f4bf0ca7e57e37a30aaad843b576961de584181bc295b3e5dd249154c00d
+→ reports/clair/16-10-2025/localhost_5001_gcp_currencyservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/emailservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/emailservice@sha256:579390a76c40036a010928f325276da73718674ca4ec19b2e876e5d708f7f109
+→ reports/clair/16-10-2025/localhost_5001_gcp_emailservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/frontend:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/frontend@sha256:72394a3ebf3407972bf622b1984aa89a55cb6ee42c926f8e1ce5ee99b36ed8c8
+→ reports/clair/16-10-2025/localhost_5001_gcp_frontend_latest.json
+Resolving tag to digest: localhost:5001/gcp/loadgenerator:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/loadgenerator@sha256:081eaac40a6bb3530ebbdfbce7470b221ef13f24349d9b9078b04a9d4d775a16
+→ reports/clair/16-10-2025/localhost_5001_gcp_loadgenerator_latest.json
+Resolving tag to digest: localhost:5001/gcp/paymentservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/paymentservice@sha256:b13176fe8bc3988fdfc631e482a183bb6fa521b72205fd404d12c21d5c3dac39
+→ reports/clair/16-10-2025/localhost_5001_gcp_paymentservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/productcatalogservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/productcatalogservice@sha256:f87a1b9853bbd88ad83843982128b849b20ca8bf471902b4611f97b8d4597588
+→ reports/clair/16-10-2025/localhost_5001_gcp_productcatalogservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/recommendationservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/recommendationservice@sha256:f6eb59ee4ab6a6833f6fe88b52f77dc00a3a5aa640f818785506463ca82423d5
+→ reports/clair/16-10-2025/localhost_5001_gcp_recommendationservice_latest.json
+Resolving tag to digest: localhost:5001/gcp/shippingservice:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/gcp/shippingservice@sha256:a711a731091c118d5ee3f5f0d7f8a283eea85add68f8677963d1d49cc584680f
+→ reports/clair/16-10-2025/localhost_5001_gcp_shippingservice_latest.json
+Resolving tag to digest: localhost:5001/istio/details-v2:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/details-v2@sha256:5f7fbe6987e572276ae824e9cfe7a33dae1896dd855fa5c487faa890fad6f010
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/details-v2:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_details-v2_1.20.3.json
+Resolving tag to digest: localhost:5001/istio/mongodb:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/mongodb@sha256:7f5ef5a825048f5f777da521c9756c8d0f007c58358c87b8629456832bbf73ad
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/mongodb:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_mongodb_1.20.3.json
+Resolving tag to digest: localhost:5001/istio/mysqldb:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/mysqldb@sha256:cd7ab8eceb25f26d99807df80780173ecb2e8f464adee9b7bbb81088a61d7e45
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/mysqldb:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_mysqldb_1.20.3.json
+Resolving tag to digest: localhost:5001/istio/productpage-v-flooding:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/productpage-v-flooding@sha256:d72066571860724b364b6506398f73103991d2cf96fc000a7e52130f6c8cb1d5
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/productpage-v-flooding:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_productpage-v-flooding_1.20.3.json
+Resolving tag to digest: localhost:5001/istio/ratings-v-buggy:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/ratings-v-buggy@sha256:aa633db6be88e44de6846857bd42e2df6402e0d5fd307a4c7786615ad9abfaea
+→ reports/clair/16-10-2025/localhost_5001_istio_ratings-v-buggy_latest.json
+Resolving tag to digest: localhost:5001/istio/ratings-v-faulty:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/ratings-v-faulty@sha256:e3043acea543f975dfd740d49e9b37cf97c56e91648e291cce52400f06f6b26c
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/ratings-v-faulty:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_ratings-v-faulty_1.20.3.json
+Resolving tag to digest: localhost:5001/istio/ratings-v2:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/ratings-v2@sha256:cb361115b5ea27a765a5bdc7623e235cc37839289f477e1c0aefa4425b0749ff
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/ratings-v2:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_ratings-v2_1.20.3.json
+Resolving tag to digest: localhost:5001/istio/reviews-v3:1.20.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/istio/reviews-v3@sha256:3b3415c5e7cc7cef3ad1741fa595f2f26627bddf2117dcee1429fa2a422df1b7
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/istio/reviews-v3:1.20.3
+→ reports/clair/16-10-2025/localhost_5001_istio_reviews-v3_1.20.3.json
+Resolving tag to digest: localhost:5001/library/alpine:3.22.1
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/alpine:3.22.1
+→ reports/clair/16-10-2025/localhost_5001_library_alpine_3.22.1.json
+Resolving tag to digest: localhost:5001/library/haskell:9.8.4-slim-bullseye
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/haskell@sha256:c20a4629b9ccdb8c85796d0ea42ba08df3333c1bdc2cdf990adf3d5cc2cf70a7
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/haskell:9.8.4-slim-bullseye
+→ reports/clair/16-10-2025/localhost_5001_library_haskell_9.8.4-slim-bullseye.json
+Resolving tag to digest: localhost:5001/library/matomo:5.4.0
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/matomo@sha256:1f28cb9fa54f93ff3080c9dd4264d9709d96d713565041ce2a8bfa78149bb867
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/matomo:5.4.0
+→ reports/clair/16-10-2025/localhost_5001_library_matomo_5.4.0.json
+Resolving tag to digest: localhost:5001/library/nginx:1.29.1
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/nginx@sha256:8adbdcb969e2676478ee2c7ad333956f0c8e0e4c5a7463f4611d7a2e7a7ff5dc
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/nginx:1.29.1
+→ reports/clair/16-10-2025/localhost_5001_library_nginx_1.29.1.json
+Resolving tag to digest: localhost:5001/library/node:24.9.0-alpine3.21
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/node@sha256:843a738e7405b4fb42b2fc37d6c99cd2063af9f48852968a09851129a96b0ebf
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/node:24.9.0-alpine3.21
+→ reports/clair/16-10-2025/localhost_5001_library_node_24.9.0-alpine3.21.json
+Resolving tag to digest: localhost:5001/library/rabbitmq:4.2-rc
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/rabbitmq@sha256:4af56e46a4f6dd0558d86a04587dfc2c84424dadfe42eebd67e631e0e107baf9
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/rabbitmq:4.2-rc
+→ reports/clair/16-10-2025/localhost_5001_library_rabbitmq_4.2-rc.json
+Resolving tag to digest: localhost:5001/library/tomcat:11.0.11-jdk25-temurin-noble
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/tomcat@sha256:2b3894dce12e0f4b81e972269143f44781c7ed490379fe3f8d38b0b56c8a6792
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/tomcat:11.0.11-jdk25-temurin-noble
+→ reports/clair/16-10-2025/localhost_5001_library_tomcat_11.0.11-jdk25-temurin-noble.json
+Resolving tag to digest: localhost:5001/library/traefik:v3.5.3
+Clair scanning (as seen by Clair): host.docker.internal:5001/library/traefik@sha256:84eb6c0e67c99fa026bf1bf4b0afd9ad44350d375b4ebc5049c5f70543a729d6
+  ↺ digest not resolvable; retrying by tag: host.docker.internal:5001/library/traefik:v3.5.3
+→ reports/clair/16-10-2025/localhost_5001_library_traefik_v3.5.3.json
+Resolving tag to digest: localhost:5001/org/docker/kafka-setup-topics:2024.10.17-2
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/docker/kafka-setup-topics@sha256:c46ca0439de47b3cea09bea542e97b34afd8442c571c394143c685d81a3e65ae
+→ reports/clair/16-10-2025/localhost_5001_org_docker_kafka-setup-topics_2024.10.17-2.json
+Resolving tag to digest: localhost:5001/org/itdev/ibe-tool-liquibase:local
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/itdev/ibe-tool-liquibase@sha256:952eeb57eca15b4f66ae200951dc599097bed1790223151be47c9881c00d64eb
+→ reports/clair/16-10-2025/localhost_5001_org_itdev_ibe-tool-liquibase_local.json
+Resolving tag to digest: localhost:5001/org/plat/bscjs:latest
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/plat/bscjs@sha256:5e88464151cedc46727eb027478ed7d0f399341061f09d9c59ac63b5fc786469
+→ reports/clair/16-10-2025/localhost_5001_org_plat_bscjs_latest.json
+Resolving tag to digest: localhost:5001/org/security/tool-service-authentication-admin-realm:2025.7.21-feature.plj292.dev.9
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/security/tool-service-authentication-admin-realm@sha256:3666c3442acef3b70ae90a18c46bad0f50dced8d731497631842c45cdcfe218b
+→ reports/clair/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.7.21-feature.plj292.dev.9.json
+Resolving tag to digest: localhost:5001/org/security/tool-service-authentication-admin-realm:2025.9.10-198
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/security/tool-service-authentication-admin-realm@sha256:71dd26deaf85e364a9940171d8feacd25acf7900e027145c9202d8e41f0074f0
+→ reports/clair/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.9.10-198.json
+Resolving tag to digest: localhost:5001/org/security/tool-service-authentication-admin-realm:2025.8.1-175
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/security/tool-service-authentication-admin-realm@sha256:7d19b2e4ad6a6e96a39d60d60bb5badaf9ad245739f10d42c9b20eeef0bd1077
+→ reports/clair/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.8.1-175.json
+Resolving tag to digest: localhost:5001/org/security/tool-service-authentication-admin-realm:2025.8.7-177
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/security/tool-service-authentication-admin-realm@sha256:75c28437c9abf660a848e0e31140ccc5f886e8b8f331136cb1f764765c67ab8c
+→ reports/clair/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.8.7-177.json
+Resolving tag to digest: localhost:5001/org/security/tool-service-authentication-admin-realm:2025.7.16-feature.plj293.dev.2
+Clair scanning (as seen by Clair): host.docker.internal:5001/org/security/tool-service-authentication-admin-realm@sha256:f42dd7e95975b1a83c13730e9e574cb62f41e3a1b16faf34dbf6b4f195fe762f
+→ reports/clair/16-10-2025/localhost_5001_org_security_tool-service-authentication-admin-realm_2025.7.16-feature.plj293.dev.2.json
+All Clair reports at reports/clair/16-10-2025
+# Aggregates written to out
